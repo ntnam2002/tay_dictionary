@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Từ điển Tày – Việt</title>
+  <meta name="description" content="Từ điển Tày – Việt đơn giản, hiện đại." />
+  <style>
+    :root {
+      --bg: #f7f7f5;
+      --surface: #ffffff;
+      --text: #1d1d1f;
+      --muted: #6e6e73;
+      --line: #e5e5e5;
+      --soft: #f2f2f0;
+      --accent: #245d43;
+      --accent-soft: #eaf2ed;
+      --shadow: 0 12px 35px rgba(0,0,0,.06);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(36,93,67,.035), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .shell {
+      width: min(940px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 26px 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--text);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .lang {
+      font-size: 13px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.6);
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+
+    main {
+      padding: 54px 0 72px;
+    }
+
+    .hero {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 20px 0 12px;
+      font-size: clamp(38px, 6vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+      font-weight: 760;
+    }
+
+    .subtitle {
+      margin: 0 auto;
+      max-width: 600px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .search-wrap {
+      position: relative;
+      margin: 38px auto 0;
+      max-width: 760px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 10px 10px 10px 18px;
+      box-shadow: var(--shadow);
+      transition: .2s ease;
+    }
+
+    .search-box:focus-within {
+      border-color: #b8cfc1;
+      box-shadow: 0 14px 40px rgba(36,93,67,.10);
+      transform: translateY(-1px);
+    }
+
+    .search-icon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+      color: #8c8c91;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-size: 17px;
+      padding: 10px 0;
+    }
+
+    input::placeholder { color: #aaa; }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .search-btn {
+      background: var(--text);
+      color: white;
+      border-radius: 13px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: .15s ease;
+    }
+
+    .search-btn:hover { opacity: .88; }
+    .search-btn:active { transform: scale(.98); }
+
+    .suggestions {
+      display: none;
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 10px);
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 8px;
+      text-align: left;
+      overflow: hidden;
+    }
+
+    .suggestions.show { display: block; }
+
+    .suggestion {
+      width: 100%;
+      background: transparent;
+      text-align: left;
+      padding: 12px 13px;
+      border-radius: 11px;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .suggestion:hover,
+    .suggestion.active {
+      background: var(--soft);
+    }
+
+    .suggestion small {
+      display: block;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .examples {
+      margin: 18px auto 0;
+      max-width: 760px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .chip {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: #555;
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 12px;
+      transition: .15s ease;
+    }
+
+    .chip:hover {
+      background: var(--surface);
+      border-color: #cfcfcf;
+    }
+
+    .result-area {
+      margin: 34px auto 0;
+      max-width: 760px;
+      min-height: 260px;
+    }
+
+    .result-card {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: 0 10px 32px rgba(0,0,0,.045);
+      text-align: left;
+      animation: fadeUp .22s ease;
+    }
+
+    .result-card.show { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-label {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .source {
+      margin: 10px 0 0;
+      font-size: 25px;
+      line-height: 1.42;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 24px 0;
+    }
+
+    .meaning-title {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .meaning {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+      font-size: 23px;
+      line-height: 1.6;
+      color: #2b2b2b;
+      font-weight: 500;
+      letter-spacing: 0;
+      word-spacing: 0;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    .meta {
+      margin-top: 22px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: var(--soft);
+      color: #666;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 44px 16px;
+    }
+
+    .empty-state .big {
+      color: var(--text);
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .footnote {
+      margin-top: 34px;
+      text-align: center;
+      color: #999;
+      font-size: 12px;
+    }
+
+    @media (max-width: 640px) {
+      header { padding-top: 18px; }
+      main { padding-top: 34px; }
+      h1 { font-size: 42px; }
+      .subtitle { font-size: 15px; }
+      .search-box {
+        border-radius: 16px;
+        padding-left: 14px;
+      }
+      .search-btn {
+        padding: 11px 13px;
+      }
+      .result-card {
+        padding: 22px;
+        border-radius: 16px;
+      }
+      .source { font-size: 21px; }
+      .meaning { font-size: 20px; }
+      .lang { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="mark">T</div>
+        <div>Từ điển Tày – Việt</div>
+      </div>
+      <div class="lang">Tày → Tiếng Việt</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">Tra cứu ngữ nghĩa</div>
+        <h1>Hiểu tiếng Tày,<br>theo cách tự nhiên.</h1>
+        <p class="subtitle">
+          Nhập câu tiếng Tày để tra nghĩa tiếng Việt. Dữ liệu hiện tại gồm các câu thành ngữ,
+          lời nói dân gian và cách diễn đạt truyền thống.
+        </p>
+
+        <div class="search-wrap">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <input
+              id="searchInput"
+              type="text"
+              autocomplete="off"
+              placeholder="Nhập câu tiếng Tày..."
+              aria-label="Nhập câu tiếng Tày"
+            />
+            <button class="search-btn" id="searchBtn">Tra nghĩa</button>
+          </div>
+          <div class="suggestions" id="suggestions"></div>
+        </div>
+
+        <div class="examples">
+          <button class="chip" data-index="0">Bươn slam lồng chả...</button>
+          <button class="chip" data-index="1">Pất cáy têm cai...</button>
+          <button class="chip" data-index="2">Ngần dèn tang tôm nhả...</button>
+          <button class="chip" data-index="3">Công mẻ cải bặng...</button>
+        </div>
+
+        <div class="result-area">
+          <div class="result-card" id="resultCard">
+            <div class="result-label">Kết quả tra cứu</div>
+            <div class="source" id="sourceText"></div>
+            <div class="divider"></div>
+            <div class="meaning-title">Nghĩa tiếng Việt</div>
+            <p class="meaning" id="meaningText"></p>
+            <div class="meta">
+              <span class="tag">Tiếng Tày</span>
+              <span class="tag">Dịch nghĩa</span>
+            </div>
+          </div>
+
+          <div class="empty-state" id="emptyState">
+            <div class="big">Tra một câu để xem nghĩa</div>
+            <div>Bạn có thể chọn nhanh một ví dụ bên trên hoặc nhập trực tiếp.</div>
+          </div>
+        </div>
+
+        <div class="footnote">
+          Bản mẫu giao diện từ điển Tày – Việt · hiển thị tốt dấu tiếng Việt trên trình duyệt
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const dictionary = [
+      {
+        tay: "Bươn slam lồng chả, bươn hả đăm nà",
+        vi: "tháng Ba (âm lịch) gieo mạ, tháng Năm cấy lúa"
+      },
+      {
+        tay: "Pất cáy têm cai, mò vài têm lảng",
+        vi: "gà, vịt đầy sàn nhà, trâu, bò đầy chuồng"
+      },
+      {
+        tay: "Ngần dèn tang tôm nhả, tha nả tảy xiên kim",
+        vi: "tiền bạc coi như đất, cỏ; tình cảm con người còn quý hơn nghìn vàng"
+      },
+      {
+        tay: "Công mẻ cải bặng bó nặm luây mà",
+        vi: "Công mẹ lớn như nước suối chảy ra"
+      }
+    ];
+
+    const input = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    const resultCard = document.getElementById("resultCard");
+    const emptyState = document.getElementById("emptyState");
+    const sourceText = document.getElementById("sourceText");
+    const meaningText = document.getElementById("meaningText");
+    const suggestions = document.getElementById("suggestions");
+
+    let activeSuggestion = -1;
+    let currentSuggestions = [];
+
+    function normalize(str) {
+      return str
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,;:!?()[\]{}'"“”‘’\-–—]/g, " ")
+        .replace(/\s+/g, " ");
+    }
+
+    function scoreMatch(query, candidate) {
+      const q = normalize(query);
+      const c = normalize(candidate);
+      if (!q) return 0;
+      if (q === c) return 100;
+      if (c.startsWith(q)) return 80;
+      if (c.includes(q)) return 65;
+
+      const qWords = q.split(" ");
+      const cWords = c.split(" ");
+      const common = qWords.filter(w => cWords.includes(w)).length;
+      return common / Math.max(qWords.length, 1) * 50;
+    }
+
+    function findBest(query) {
+      let best = null;
+      let bestScore = 0;
+
+      dictionary.forEach(item => {
+        const score = scoreMatch(query, item.tay);
+        if (score > bestScore) {
+          bestScore = score;
+          best = item;
+        }
+      });
+
+      return bestScore >= 35 ? best : null;
+    }
+
+    function showResult(item) {
+      sourceText.textContent = item.tay;
+      meaningText.textContent = item.vi;
+      resultCard.classList.add("show");
+      emptyState.style.display = "none";
+      suggestions.classList.remove("show");
+    }
+
+    function showNotFound() {
+      resultCard.classList.remove("show");
+      emptyState.style.display = "block";
+      emptyState.innerHTML = `
+        <div class="big">Chưa tìm thấy câu phù hợp</div>
+        <div>Hãy thử nhập đầy đủ hơn, hoặc chọn một câu gợi ý có sẵn.</div>
+      `;
+      suggestions.classList.remove("show");
+    }
+
+    function search() {
+      const query = input.value.trim();
+
+      if (!query) {
+        resultCard.classList.remove("show");
+        emptyState.style.display = "block";
+        emptyState.innerHTML = `
+          <div class="big">Tra một câu để xem nghĩa</div>
+          <div>Bạn có thể chọn nhanh một ví dụ bên trên hoặc nhập trực tiếp.</div>
+        `;
+        return;
+      }
+
+      const result = findBest(query);
+      result ? showResult(result) : showNotFound();
+    }
+
+    function renderSuggestions() {
+      const query = input.value.trim();
+
+      if (!query) {
+        suggestions.classList.remove("show");
+        currentSuggestions = [];
+        return;
+      }
+
+      currentSuggestions = dictionary
+        .map(item => ({ item, score: scoreMatch(query, item.tay) }))
+        .filter(x => x.score > 10)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 4)
+        .map(x => x.item);
+
+      if (!currentSuggestions.length) {
+        suggestions.classList.remove("show");
+        return;
+      }
+
+      activeSuggestion = -1;
+      suggestions.innerHTML = currentSuggestions.map((item, index) => `
+        <button class="suggestion" data-suggestion="${index}">
+          ${item.tay}
+          <small>${item.vi}</small>
+        </button>
+      `).join("");
+
+      suggestions.classList.add("show");
+
+      suggestions.querySelectorAll(".suggestion").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const item = currentSuggestions[Number(btn.dataset.suggestion)];
+          input.value = item.tay;
+          showResult(item);
+        });
+      });
+    }
+
+    input.addEventListener("input", renderSuggestions);
+
+    input.addEventListener("keydown", e => {
+      if (!suggestions.classList.contains("show")) {
+        if (e.key === "Enter") search();
+        return;
+      }
+
+      const buttons = [...suggestions.querySelectorAll(".suggestion")];
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeSuggestion = Math.min(activeSuggestion + 1, buttons.length - 1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeSuggestion = Math.max(activeSuggestion - 1, 0);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeSuggestion >= 0 && currentSuggestions[activeSuggestion]) {
+          const item = currentSuggestions[activeSuggestion];
+          input.value = item.tay;
+          showResult(item);
+        } else {
+          search();
+        }
+        return;
+      } else if (e.key === "Escape") {
+        suggestions.classList.remove("show");
+        return;
+      } else {
+        return;
+      }
+
+      buttons.forEach((b, i) => b.classList.toggle("active", i === activeSuggestion));
+    });
+
+    searchBtn.addEventListener("click", search);
+
+    document.querySelectorAll(".chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        const item = dictionary[Number(chip.dataset.index)];
+        input.value = item.tay;
+        showResult(item);
+        input.focus();
+      });
+    });
+
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".search-wrap")) {
+        suggestions.classList.remove("show");
+      }
+    });
+
+    window.addEventListener("load", () => input.focus());
+  </script>
+</body>
+</html>
